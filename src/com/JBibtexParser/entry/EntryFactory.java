@@ -9,7 +9,7 @@ import com.JBibtexParser.util.exceptions.FieldOrTypeMissingException;
 import com.JBibtexParser.util.LeveledString;
 import com.JBibtexParser.util.exceptions.ParseErrorException;
 import com.JBibtexParser.fieldparser.IFieldParser;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class EntryFactory {
     }
 
     private StringEntry createStringEntry(LeveledString leveledEntry) throws ParseErrorException {
-        List<Pair<LeveledString, LeveledString>> pairs = leveledEntry.splitIntoKeyValuePairs();
+        List<MutablePair<LeveledString, LeveledString>> pairs = leveledEntry.splitIntoKeyValuePairs();
         if (pairs.size() < 1) throw new ParseErrorException("Missing string substitution in block " + leveledEntry);
         if(pairs.get(0).getKey().getEntry().equals("JBibtexParser_entry_id_specifier") || pairs.get(0).getKey().length()==0 || pairs.get(0).getValue().length() ==0) throw new ParseErrorException("Malformed string substitution");
         return new StringEntry(pairs.get(0).getKey().getEntry(), pairs.get(0).getValue().getEntry());
@@ -58,11 +58,11 @@ public class EntryFactory {
         if (!entryTypesManager.hasType(entryName.trim()))
             throw new FieldOrTypeMissingException("Some types are not defined: " + entryName);
         PublicationEntry publicationEntry = new PublicationEntry(entryTypesManager.getType(entryName.trim().toLowerCase()));
-        List<Pair<LeveledString, LeveledString>> pairs = leveledEntry.splitIntoKeyValuePairs();
-        Pair<LeveledString, LeveledString> label = pairs.stream().filter(p -> p.getKey().getEntry().trim().equals("JBibtexParser_entry_id_specifier")).findFirst().get();
+        List<MutablePair<LeveledString, LeveledString>> pairs = leveledEntry.splitIntoKeyValuePairs();
+        MutablePair<LeveledString, LeveledString> label = pairs.stream().filter(p -> p.getKey().getEntry().trim().equals("JBibtexParser_entry_id_specifier")).findFirst().get();
         publicationEntry.setEntryName(label.getValue().getEntry().toLowerCase());
         pairs.remove(label);
-        Object[] leveledStringStream = pairs.stream().map(Pair::getKey).filter(p -> !entryTypesManager.hasField(p.getEntry().trim())).toArray();
+        Object[] leveledStringStream = pairs.stream().map(MutablePair::getKey).filter(p -> !entryTypesManager.hasField(p.getEntry().trim())).toArray();
 
         if (leveledStringStream.length > 0)
             throw new FieldOrTypeMissingException("Some fields are not defined: " + leveledStringStream[0].toString());

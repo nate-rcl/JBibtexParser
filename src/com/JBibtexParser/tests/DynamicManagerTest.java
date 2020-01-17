@@ -2,10 +2,11 @@ package com.JBibtexParser.tests;
 
 import com.JBibtexParser.typemanager.DynamicTypesManager;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class DynamicManagerTest {
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyCreateFields() {
         DynamicTypesManager dynamicTypesManager = new DynamicTypesManager();
         assertEquals(0,dynamicTypesManager.getAllFields().size());

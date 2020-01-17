@@ -8,9 +8,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 public class FileReaderTest {
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyDivideIntoBlocks() throws BlockProviderException, IOException {
         FileReader fileReader = new FileReader();
         File tempFile = File.createTempFile("jbibtex-", "-test");

@@ -18,12 +18,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by Aleksander on 05.12.2017.
  */
 public class EntryFactoryTest {
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyDistinguishPublicationEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@article{m0001, author = mockAuthor, Title = mockTitle,publisher = mockPublisher,YEAR = 2000 }";
@@ -32,7 +33,7 @@ public class EntryFactoryTest {
         assertTrue(entry instanceof PublicationEntry);
         assertEquals("mockAuthor", ((PublicationEntry) entry).getFields().get(new EntryField("author")).get(0).trim());
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldHandleMalformedPublicationEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@article{m0001, author = mockAuthor, Title=test=test,publisher = mockPublisher,YEAR = 2000 }";
@@ -40,21 +41,21 @@ public class EntryFactoryTest {
         assertThrows(ParseErrorException.class, closureContainingCodeToTest);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyDistinguishCommentEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@comment{mockContents}";
         IEntry entry = mockEntryFactory.getEntry(block);
         assertTrue(entry instanceof CommentEntry);
      }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyDistinguishPreambleEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@preamble{mockContents}";
         IEntry entry = mockEntryFactory.getEntry(block);
         assertTrue(entry instanceof PreambleEntry);
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyDistinguishStringEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@string{mar=march}";
@@ -63,21 +64,21 @@ public class EntryFactoryTest {
         assertEquals("mar",((StringEntry) entry).getSourceText());
         assertEquals("march",((StringEntry) entry).getReplacementText());
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyHandleStringMalformedEntry() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@string{mar=ma=rch}";
                 Executable closureContainingCodeToTest = () ->{    IEntry entry = mockEntryFactory.getEntry(block); };
                 assertThrows(ParseErrorException.class, closureContainingCodeToTest);
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyHandleStringMalformedEntry2() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@string{=rch}";
         Executable closureContainingCodeToTest = () ->{    IEntry entry = mockEntryFactory.getEntry(block); };
         assertThrows(ParseErrorException.class, closureContainingCodeToTest);
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyHandleStringMalformedEntry3() throws ParseErrorException {
         EntryFactory mockEntryFactory = getMockedFactory();
         String block =   "@string{rch}";

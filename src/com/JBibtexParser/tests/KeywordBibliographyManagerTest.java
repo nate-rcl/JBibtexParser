@@ -12,23 +12,23 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import org.junit.jupiter.api.Test;
 /**
  * Created by Aleksander on 05.12.2017.
  */
 public class KeywordBibliographyManagerTest {
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldCorrectlyAddEntries() {
         KeywordBibliographyManager manager = getManagerWithMockedEntry();
         IEntryTypesManager.IEntryType mockType = new EntryType("mock");
         assertEquals(1, manager.filterByType(mockType).getBibliography().size());
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldFindByKeywords() {
         KeywordBibliographyManager manager = getManagerWithMockedEntry();
         assertEquals(1, manager.findEntriesContainingWords("mockValue2").getBibliography().size());
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void ShouldFindByFieldValue() {
         IEntryTypesManager.IEntryField mockField = new EntryField("mock");
         KeywordBibliographyManager manager = getManagerWithMockedEntry();

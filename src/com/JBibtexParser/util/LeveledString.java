@@ -1,7 +1,7 @@
 package com.JBibtexParser.util;
 
 import com.JBibtexParser.util.exceptions.ParseErrorException;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.*;
 import java.util.function.IntBinaryOperator;
@@ -96,13 +96,13 @@ public class LeveledString {
     }
 
     public LeveledString substituteOnLevel(int level, String [] finds, String replace) throws ParseErrorException {
-        List<Pair> positionsandlevels = new ArrayList<>();
+        List<MutablePair> positionsandlevels = new ArrayList<>();
         String newEntry = entry;
         for(String find:finds){
-            positionsandlevels.addAll( findAllOccurences(newEntry, find).stream().filter(p -> levels[p] <= level).map(p -> new Pair(p, find.length())).collect(Collectors.toList()));
+            positionsandlevels.addAll(findAllOccurences(newEntry, find).stream().filter(p -> levels[p] <= level).map(p -> new MutablePair(p, find.length())).collect(Collectors.toList()));
         }
         positionsandlevels.sort(Comparator.comparing(p0 -> -((Integer) p0.getKey())));
-        for (Pair<Integer, Integer> position : positionsandlevels) {
+        for (MutablePair<Integer, Integer> position : positionsandlevels) {
             newEntry = newEntry.substring(0, position.getKey()) + replace + newEntry.substring(position.getKey()+position.getValue(), newEntry.length());
         }
             return new LeveledString(newEntry);
@@ -190,8 +190,8 @@ public class LeveledString {
         return levels;
     }
 
-    public List<Pair<LeveledString, LeveledString>> splitIntoKeyValuePairs() throws ParseErrorException {
-        List<Pair<LeveledString, LeveledString>> pairs = new LinkedList<>();
+    public List<MutablePair<LeveledString, LeveledString>> splitIntoKeyValuePairs() throws ParseErrorException {
+        List<MutablePair<LeveledString, LeveledString>> pairs = new LinkedList<>();
         boolean foundName = false;
         List<LeveledString> substrings = getSubstringsOfLevel(1, (x, y) -> x - y);
         if (substrings.size() == 0) throw new ParseErrorException("Malformed bibtex");
@@ -199,13 +199,13 @@ public class LeveledString {
             List<LeveledString> keyValue = leveledString.splitOnLevel('=', 0);
             if(keyValue.size()>2) throw  new ParseErrorException("Too many keys in entry" + getEntry());
             if (keyValue.size() == 1 && leveledString.getEntry().trim().length() > 0) {
-                pairs.add(new Pair<LeveledString, LeveledString>(new LeveledString("JBibtexParser_entry_id_specifier"), keyValue.get(0)));
+                pairs.add(new MutablePair<LeveledString, LeveledString>(new LeveledString("JBibtexParser_entry_id_specifier"), keyValue.get(0)));
                 foundName = true;
             } else if (keyValue.size() == 2)
-                pairs.add(new Pair<LeveledString, LeveledString>(keyValue.get(0), keyValue.get(1)));
+                pairs.add(new MutablePair<LeveledString, LeveledString>(keyValue.get(0), keyValue.get(1)));
         }
         if (!foundName)
-            pairs.add(new Pair<LeveledString, LeveledString>(new LeveledString("JBibtexParser_entry_id_specifier"), new LeveledString("")));
+            pairs.add(new MutablePair<LeveledString, LeveledString>(new LeveledString("JBibtexParser_entry_id_specifier"), new LeveledString("")));
         return pairs;
     }
     @SuppressWarnings("unused")
