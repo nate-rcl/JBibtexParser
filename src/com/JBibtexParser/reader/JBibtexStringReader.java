@@ -6,90 +6,90 @@ import java.io.StringReader;
 
 import com.JBibtexParser.util.exceptions.BlockProviderException;
 
-public class JBibtexStringReader implements IBlocksProvider{
+public class JBibtexStringReader implements IBlocksProvider {
 
-	private String content;
-    private BufferedReader br;
-    private String appendToNextEntry="";
+	private String content = null;
+	private BufferedReader br = null;
+	private String appendToNextEntry = "";
+	private int c = 1; 
 
-    /**
-     * @param string to parse
-     */
-    public void setContent(String content){
-        this.content = content;
-    }
-    
-    /**
-     * Opens the file
-     *
-     * @throws BlockProviderException  if a file does not exist or can not be read
-     */
+	/**
+	 * @param string to parse
+	 */
+	public void setContent(String content) {
+		this.content = content;
+	}
 
-    @Override
-    public void openProvider() throws BlockProviderException {
-    	br = new BufferedReader(new StringReader(content));
-    }
-    
-    /**
-     * Provides a block containing one bibtex entry from file
-     *
-     * @return A block containing next entry
-     * @throws BlockProviderException on inner IOException
-     */
+	/**
+	 * Opens the file
+	 *
+	 * @throws BlockProviderException if a file does not exist or can not be read
+	 */
 
-    public String nextEntry() throws BlockProviderException {
-        StringBuilder sb = new StringBuilder();
-        sb.append(appendToNextEntry);
-        appendToNextEntry="";
+	@Override
+	public void openProvider() throws BlockProviderException {
+		br = new BufferedReader(new StringReader(content));
+	}
 
-            int bracketCounter=0;
-            boolean currentEntry=true;
-        try {
-            while (br.ready() && currentEntry) {
+	/**
+	 * Provides a block containing one bibtex entry from file
+	 *
+	 * @return A block containing next entry
+	 * @throws BlockProviderException on inner IOException
+	 */
 
-                char r = (char) br.read();
-                if (r == '{') {
-                    bracketCounter++;
-                }
-                if (r == '}') {
-                    bracketCounter--;
-                    if(bracketCounter==0)
-                    {
-                        currentEntry=false;
-                    }
-                }
-                if (r == '@') {
-                    currentEntry=false;
-                    appendToNextEntry="@";
-                }else {
-                    sb.append(r);
-                }
-            }
-        } catch (IOException e) {
-            throw new BlockProviderException("Failed to open File " + e.getMessage());
-        }
+	public String nextEntry() throws BlockProviderException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(appendToNextEntry);
+		appendToNextEntry = "";
 
-        return sb.toString();
-    }
-    /**
-     * @return A value indicating if there are any more entries in the opened file.
-     * @throws BlockProviderException on exception while reading blocks
-     */
-    public boolean hasNextEntry() throws BlockProviderException {
-        try {
-            return br.ready();
-        } catch (IOException e) {
-            throw new BlockProviderException("Failed to read some entries from file" + e.getMessage());
-        }
-    }
+		int bracketCounter = 0;
+		boolean currentEntry = true;
+		
+		try {
+			c = br.read();
+			while (c != -1 && currentEntry) {
+				char r = (char)c;
+				if (r == '{') {
+					bracketCounter++;
+				}
+				if (r == '}') {
+					bracketCounter--;
+					if (bracketCounter == 0) {
+						currentEntry = false;
+					}
+				}
+				if (r == '@') {
+					currentEntry = false;
+					appendToNextEntry = "@";
+				} else {
+					sb.append(r);
+				}
+				c = br.read();
+			}
+		} catch (IOException e) {
+			throw new BlockProviderException("Failed to read string " + e.getMessage());
+		}
 
-    @Override
-    public void closeProvider() {
-        try {
-            br.close();
-        } catch (IOException e) {
-            //assume file to be closed
-        }
-    }
+		return sb.toString();
+	}
+
+	/**
+	 * @return A value indicating if there are any more entries in the opened file.
+	 * @throws BlockProviderException on exception while reading blocks
+	 */
+	public boolean hasNextEntry() {
+		return c != -1;
+	}
+
+	@Override
+	public void closeProvider() {
+		System.out.println("closed called");
+		try {
+			br.close();
+		} catch (IOException e) {
+			br = null;
+		}
+	}
 
 }
