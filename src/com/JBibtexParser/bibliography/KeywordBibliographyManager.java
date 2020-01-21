@@ -59,9 +59,12 @@ public class KeywordBibliographyManager implements IBibliographyManager{
 	 * @return
 	 */
 	public KeywordBibliographyManager findEntriesContainingWords(String query){
+		String lowerQuery = query.toLowerCase();
 		Bibliography b=new Bibliography();
-		if(!keywords.containsKey(query)) return new KeywordBibliographyManager(keywords,b);
-		for(PublicationEntry entry:keywords.get(query)){
+		 
+		System.out.println(keywords.containsKey(lowerQuery));
+		if(!keywords.containsKey(lowerQuery)) return new KeywordBibliographyManager(keywords,b);
+		for(PublicationEntry entry:keywords.get(lowerQuery)){
 			if(bibliography.getEntries().contains(entry))
 			b.add(entry);
 		}

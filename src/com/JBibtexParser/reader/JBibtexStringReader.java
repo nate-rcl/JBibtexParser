@@ -84,7 +84,6 @@ public class JBibtexStringReader implements IBlocksProvider {
 
 	@Override
 	public void closeProvider() {
-		System.out.println("closed called");
 		try {
 			br.close();
 		} catch (IOException e) {
